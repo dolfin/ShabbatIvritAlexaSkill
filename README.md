@@ -25,7 +25,7 @@ This skill plays 103 FM Shabbat Ivrit in Alexa
 2. Initiatialize the [ASK CLI](https://developer.amazon.com/docs/smapi/quick-start-alexa-skills-kit-command-line-interface.html) by Navigating into the repository and running npm command: `ask init`. Follow the prompts.
 
 	```bash
-	$ cd stream-test
+	$ cd ShabbatIvritAlexaSkill
 	$ ask init
 	```
 
