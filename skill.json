@@ -1,0 +1,42 @@
+{
+  "manifest": {
+    "publishingInformation": {
+      "locales": {
+        "en-US": {
+          "summary": "This skill plays the latest Shabbat Ivrit Radio on 103FM",
+          "examplePhrases": [
+            "Alexa, play shabbat ivrit",
+            "Alexa, stream shabbat ivrit"
+          ],
+          "name": "Shabbat Ivrit",
+          "description": "This skill plays the latest Shabbat Ivrit Radio on 103FM"
+        }
+      },
+      "isAvailableWorldwide": true,
+      "testingInstructions": "JusSt launch the skill",
+      "category": "GAMES",
+      "distributionCountries": []
+    },
+    "apis": {
+      "custom": {
+         "endpoint": {
+          "sourceDir": "lambda/custom"
+        },
+        "interfaces": [
+          {
+            "type": "AUDIO_PLAYER"
+          }
+        ]
+      }
+    },
+    "manifestVersion": "1.0",
+    "permissions": [],
+    "privacyAndCompliance": {
+      "allowsPurchases": false,
+      "isExportCompliant": true,
+      "containsAds": false,
+      "isChildDirected": false,
+      "usesPersonalInfo": false
+    }
+  }
+}
