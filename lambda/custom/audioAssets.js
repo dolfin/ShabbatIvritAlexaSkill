@@ -1,36 +1,31 @@
 'use strict';
+const scrape = require('./scrapeEpisodes');
 
-// There is a new file every Sunday and Wednesday
-function getRadioDate() {
-  // Find the date for previous Sunday
-  var prevSunday = new Date();
-  prevSunday.setDate(prevSunday.getDate() - (prevSunday.getDay() + 7));
-
-  // Find the date for previous Wednesday
-  var prevWednesday = new Date();
-  prevWednesday.setDate(prevWednesday.getDate() - (prevWednesday.getDay() + 4));
-
-  // Which one is newer?
-  var d = new Date(Math.max(prevWednesday, prevSunday));
-
-  // Create a date in the format ddmmyy1
-  var datestring = ("0" + d.getDate()).slice(-2) + ("0"+(d.getMonth()+1)).slice(-2) +
-  (d.getFullYear() - 2000) + "1";
-
-  return (datestring);
+function formatDate(date) {
+  return ("0" + date.getDate()).slice(-2) + ("0"+(date.getMonth()+1)).slice(-2) +
+  (date.getFullYear() - 2000);
 }
 
+var audioData, callback;
 
-var audioData = [
-    {
-        // Station Name - Displayed on card in Alexa App
-        'title' : 'Shabbat Ivrit Radio',
-        // URL to Live Stream - Should be HTTPS, if not, reach out to your BD/SA contact for assistance
-        //'url' : 'https://103fm.live.streamgates.net/103fm_live/1multix/icecast.audio',
-        'url' : 'https://103fm_aod_main.streamgates.net/103fm_aod/sub' + getRadioDate() + '.mp3',
-        // URL to Station Logo - Should be HTTPS, S3 works great
-        'image' : 'https://s3.amazonaws.com/shabbat-ivrit-skill/radio-103fm.png'
-    }
-];
+scrape.scrapeEpisodes((res) => {
+  audioData = res.map((i) => {
+    var parts = i.date.split('/');
+    var date = new Date(parts[2], parts[1] - 1, parts[0]);
+    return {'title' : 'Shabbat Ivrit Radio ' + date.toDateString() + ' ' + i.title,
+            'url' : 'https://103fm_aod_main.streamgates.net/103fm_aod/sub' + formatDate(date) + '1.mp3',
+            'image' : i.image};
+  });
 
-module.exports = audioData;
+  if (typeof callback == 'function') {
+    callback(audioData);
+  }
+});
+
+module.exports = function(cb) {
+  if (typeof audioData != 'undefined') {
+    cb(audioData); // If audioData is already define, I don't wait.
+  } else {
+    callback = cb;
+  }
+}

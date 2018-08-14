@@ -15,7 +15,6 @@ var stateHandlers = {
             console.log('LaunchRequest - startModeIntentHandlers');
 
             // Initialize Attributes
-            this.attributes['playOrder'] = Array.apply(null, {length: audioData.length}).map(Number.call, Number);
             this.attributes['index'] = 0;
             this.attributes['offsetInMilliseconds'] = 0;
             this.attributes['loop'] = true;
@@ -25,8 +24,12 @@ var stateHandlers = {
             //  Change state to START_MODE
 
             this.handler.state = constants.states.START_MODE;
-            this.emit('PlayRadio');
 
+            var thiz = this;
+            audioData(function(ad) {
+              thiz.attributes['playOrder'] = Array.apply(null, {length: ad.length}).map(Number.call, Number);
+              thiz.emit('PlayRadio');
+            });
         },
         'PlayRadio' : function () {
             console.log('PlayRadio - playModeIntentHandler');
@@ -131,38 +134,41 @@ var controller = function () {
                 this.attributes['playbackFinished'] = false;
             }
 
-            var token = String(this.attributes['playOrder'][this.attributes['index']]);
-            var playBehavior = 'REPLACE_ALL';
-            var podcast = audioData[this.attributes['playOrder'][this.attributes['index']]];
-            var offsetInMilliseconds = this.attributes['offsetInMilliseconds'];
-            // Since play behavior is REPLACE_ALL, enqueuedToken attribute need to be set to null.
-            this.attributes['enqueuedToken'] = null;
+            var thiz = this;
+            audioData(function(ad) {
+              var token = String(thiz.attributes['playOrder'][thiz.attributes['index']]);
+              var playBehavior = 'REPLACE_ALL';
+              var podcast = ad[thiz.attributes['playOrder'][thiz.attributes['index']]];
+              var offsetInMilliseconds = thiz.attributes['offsetInMilliseconds'];
+              // Since play behavior is REPLACE_ALL, enqueuedToken attribute need to be set to null.
+              thiz.attributes['enqueuedToken'] = null;
 
-            if (this.event.request.type.substring(0,11) === 'AudioPlayer') {
-                var cardTitle = 'Playing ' + podcast.title;
-                var cardContent = 'Playing ' + podcast.title;
-                var cardImage = {
-                        "smallImageUrl": podcast.image,
-                        "largeImageUrl": podcast.image
-                    };
-                this.response.cardRenderer(cardTitle, cardContent, cardImage);
-            }
+              if (thiz.event.request.type.substring(0,11) === 'AudioPlayer') {
+                  var cardTitle = 'Playing ' + podcast.title;
+                  var cardContent = 'Playing ' + podcast.title;
+                  var cardImage = {
+                          "smallImageUrl": podcast.image,
+                          "largeImageUrl": podcast.image
+                      };
+                  thiz.response.cardRenderer(cardTitle, cardContent, cardImage);
+              }
 
-            if (this.event.request.type === 'LaunchRequest' || this.event.request.type === 'IntentRequest') {
-                var cardTitle = 'Playing ' + podcast.title;
-                var cardContent = 'Playing ' + podcast.title;
-                var cardImage = {
-                        "smallImageUrl": podcast.image,
-                        "largeImageUrl": podcast.image
-                    };
-                this.response.cardRenderer(cardTitle, cardContent, cardImage);
+              if (thiz.event.request.type === 'LaunchRequest' || thiz.event.request.type === 'IntentRequest') {
+                  var cardTitle = 'Playing ' + podcast.title;
+                  var cardContent = 'Playing ' + podcast.title;
+                  var cardImage = {
+                          "smallImageUrl": podcast.image,
+                          "largeImageUrl": podcast.image
+                      };
+                  thiz.response.cardRenderer(cardTitle, cardContent, cardImage);
 
-                var message = "Playing "+podcast.title;
-                this.response.speak(message);
-            }
+                  var message = "Playing "+podcast.title;
+                  thiz.response.speak(message);
+              }
 
-            this.response.audioPlayerPlay(playBehavior, podcast.url, token, null, offsetInMilliseconds);
-            this.emit(':responseReady');
+              thiz.response.audioPlayerPlay(playBehavior, podcast.url, token, null, offsetInMilliseconds);
+              thiz.emit(':responseReady');
+            });
         },
         stop: function () {
             /*
@@ -217,14 +223,17 @@ var controller = function () {
             });
         },
         shuffleOff: function () {
-            // Turn off shuffle play.
-            if (this.attributes['shuffle']) {
-                this.attributes['shuffle'] = false;
-                // Although changing index, no change in audio file being played as the change is to account for reordering playOrder
-                this.attributes['index'] = this.attributes['playOrder'][this.attributes['index']];
-                this.attributes['playOrder'] = Array.apply(null, {length: audioData.length}).map(Number.call, Number);
-            }
-            controller.play.call(this);
+            var thiz = this;
+            audioData(function(ad) {
+              // Turn off shuffle play.
+              if (thiz.attributes['shuffle']) {
+                  thiz.attributes['shuffle'] = false;
+                  // Although changing index, no change in audio file being played as the change is to account for reordering playOrder
+                  thiz.attributes['index'] = thiz.attributes['playOrder'][thiz.attributes['index']];
+                  thiz.attributes['playOrder'] = Array.apply(null, {length: ad.length}).map(Number.call, Number);
+              }
+              controller.play.call(thiz);
+            });
         },
         startOver: function () {
             // Start over the current audio file.
@@ -256,17 +265,19 @@ function canThrowCard() {
 }
 
 function shuffleOrder(callback) {
-    // Algorithm : Fisher-Yates shuffle
-    var array = Array.apply(null, {length: audioData.length}).map(Number.call, Number);
-    var currentIndex = array.length;
-    var temp, randomIndex;
+    audioData(function(ad) {
+      // Algorithm : Fisher-Yates shuffle
+      var array = Array.apply(null, {length: ad.length}).map(Number.call, Number);
+      var currentIndex = array.length;
+      var temp, randomIndex;
 
-    while (currentIndex >= 1) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-        temp = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temp;
-    }
-    callback(array);
+      while (currentIndex >= 1) {
+          randomIndex = Math.floor(Math.random() * currentIndex);
+          currentIndex -= 1;
+          temp = array[currentIndex];
+          array[currentIndex] = array[randomIndex];
+          array[randomIndex] = temp;
+      }
+      callback(array);
+    });
 }

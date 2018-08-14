@@ -56,27 +56,32 @@ var audioEventHandlers = Alexa.CreateStateHandler(constants.states.PLAY_MODE, {
         
         var enqueueIndex = this.attributes['index'];
         enqueueIndex +=1;
-        // Checking if  there are any items to be enqueued.
-        if (enqueueIndex === audioData.length) {
-            if (this.attributes['loop']) {
-                // Enqueueing the first item since looping is enabled.
-                enqueueIndex = 0;
-            } else {
-                // Nothing to enqueue since reached end of the list and looping is disabled.
-                return this.context.succeed(true);
-            }
-        }
+
         // Setting attributes to indicate item is enqueued.
         this.attributes['enqueuedToken'] = String(this.attributes['playOrder'][enqueueIndex]);
 
         var enqueueToken = this.attributes['enqueuedToken'];
         var playBehavior = 'ENQUEUE';
-        var podcast = audioData[this.attributes['playOrder'][enqueueIndex]];
         var expectedPreviousToken = this.attributes['token'];
         var offsetInMilliseconds = 0;
-        
-        this.response.audioPlayerPlay(playBehavior, podcast.url, enqueueToken, expectedPreviousToken, offsetInMilliseconds);
-        this.emit(':responseReady');
+
+        var thiz = this;
+        audioData(function(ad) {
+          // Checking if  there are any items to be enqueued.
+          if (enqueueIndex === ad.length) {
+              if (thiz.attributes['loop']) {
+                  // Enqueueing the first item since looping is enabled.
+                  enqueueIndex = 0;
+              } else {
+                  // Nothing to enqueue since reached end of the list and looping is disabled.
+                  return thiz.context.succeed(true);
+              }
+          }
+          var podcast = ad[thiz.attributes['playOrder'][enqueueIndex]];
+
+          thiz.response.audioPlayerPlay(playBehavior, podcast.url, enqueueToken, expectedPreviousToken, offsetInMilliseconds);
+          thiz.emit(':responseReady');
+        });
     },
     'PlaybackFailed' : function () {
         //  AudioPlayer.PlaybackNearlyFinished Directive received. Logging the error.
