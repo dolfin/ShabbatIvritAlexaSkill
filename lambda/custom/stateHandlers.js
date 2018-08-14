@@ -180,21 +180,28 @@ var controller = function () {
             this.emit(':responseReady');
         },
         playNext: function () {
-                if (this.event.request.type === 'IntentRequest') {
-                    var message = "Sorry, that function is not available.";
-
-                    this.response.speak(message);
-                    return this.emit(':responseReady');
-                }
-
+            if (this.event.request.type === 'IntentRequest') {
+              // Jump to next episode
+              this.attributes['index'] = this.attributes['index'] + 1;
+              if (this.attributes['index'] >= this.attributes['playOrder'].length) {
+                this.attributes['index'] = 0;
+              }
+              this.attributes['offsetInMilliseconds'] = 0;
+              this.attributes['playbackIndexChanged'] = true;
+              controller.play.call(this);
+            }
         },
         playPrevious: function () {
-            if (this.event.request.type === 'IntentRequest') {
-                    var message = 'Sorry, that function is not available.';
-
-                    this.response.speak(message);
-                    return this.emit(':responseReady');
+          if (this.event.request.type === 'IntentRequest') {
+            // Jump to next episode
+            this.attributes['index'] = this.attributes['index'] - 1;
+            if (this.attributes['index'] < 0) {
+              this.attributes['index'] = this.attributes['playOrder'].length - 1;
             }
+            this.attributes['offsetInMilliseconds'] = 0;
+            this.attributes['playbackIndexChanged'] = true;
+            controller.play.call(this);
+          }
         },
         loopOn: function () {
             // Turn on loop play.
