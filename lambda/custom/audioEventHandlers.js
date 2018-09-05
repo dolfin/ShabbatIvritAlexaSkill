@@ -3,6 +3,7 @@
 var Alexa = require('alexa-sdk');
 var audioData = require('./audioAssets');
 var constants = require('./constants');
+var scrape = require('./scrapeEpisodes');
 
 // Binding audio handlers to PLAY_MODE State since they are expected only in this mode.
 var audioEventHandlers = Alexa.CreateStateHandler(constants.states.PLAY_MODE, {
@@ -79,8 +80,11 @@ var audioEventHandlers = Alexa.CreateStateHandler(constants.states.PLAY_MODE, {
           }
           var podcast = ad[thiz.attributes['playOrder'][enqueueIndex]];
 
-          thiz.response.audioPlayerPlay(playBehavior, podcast.url, enqueueToken, expectedPreviousToken, offsetInMilliseconds);
-          thiz.emit(':responseReady');
+          scrape.scrapeMediaFile(podcast.url, mf => {
+            var mfurl = constants.mediaPrefix + mf + constants.mediaSuffix;
+            thiz.response.audioPlayerPlay(playBehavior, mfurl, enqueueToken, expectedPreviousToken, offsetInMilliseconds);
+            thiz.emit(':responseReady');
+          });
         });
     },
     'PlaybackFailed' : function () {

@@ -13,28 +13,36 @@
           ]
         },
         {
-          "name": "AMAZON.PauseIntent"
+          "name": "AMAZON.PauseIntent",
+          "samples": []
         },
         {
-          "name": "AMAZON.ResumeIntent"
+          "name": "AMAZON.ResumeIntent",
+          "samples": []
         },
         {
-          "name": "AMAZON.NextIntent"
+          "name": "AMAZON.NextIntent",
+          "samples": []
         },
         {
-          "name": "AMAZON.PreviousIntent"
+          "name": "AMAZON.PreviousIntent",
+          "samples": []
         },
         {
-          "name": "AMAZON.HelpIntent"
+          "name": "AMAZON.HelpIntent",
+          "samples": []
         },
         {
-          "name": "AMAZON.StopIntent"
+          "name": "AMAZON.StopIntent",
+          "samples": []
         },
         {
-          "name": "AMAZON.CancelIntent"
+          "name": "AMAZON.CancelIntent",
+          "samples": []
         },
         {
-          "name": "AMAZON.StartOverIntent"
+          "name": "AMAZON.StartOverIntent",
+          "samples": []
         }
       ]
     }

@@ -9,6 +9,9 @@ module.exports = Object.freeze({
     dynamoDBTableName : 'ShabbatIvritSkill',
 
     scrapeUrl : 'https://103fm.maariv.co.il/program/%D7%A9%D7%91%D7%AA-%D7%A2%D7%91%D7%A8%D7%99%D7%AA-%D7%A7%D7%9C%D7%90%D7%A1%D7%99%D7%A7%D7%95%D7%AA-%D7%9E%D7%95%D7%96%D7%99%D7%A7%D7%94-%D7%99%D7%A9%D7%A8%D7%90%D7%9C%D7%99%D7%AA.aspx',
+    scrapeEpisodePrefix : 'https://103fm.maariv.co.il',
+    mediaPrefix : 'https://103fm_aod_main.streamgates.net/103fm_aod/',
+    mediaSuffix : '.mp3',
 
     states : {
         START_MODE : '',

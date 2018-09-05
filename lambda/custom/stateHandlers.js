@@ -3,6 +3,7 @@
 var Alexa = require('alexa-sdk');
 var constants = require('./constants');
 var audioData = require('./audioAssets');
+var scrape = require('./scrapeEpisodes');
 
 var stateHandlers = {
 
@@ -166,8 +167,11 @@ var controller = function () {
                   thiz.response.speak(message);
               }
 
-              thiz.response.audioPlayerPlay(playBehavior, podcast.url, token, null, offsetInMilliseconds);
-              thiz.emit(':responseReady');
+              scrape.scrapeMediaFile(podcast.url, mf => {
+                var mfurl = constants.mediaPrefix + mf + constants.mediaSuffix;
+                thiz.response.audioPlayerPlay(playBehavior, mfurl, token, null, offsetInMilliseconds);
+                thiz.emit(':responseReady');
+              });
             });
         },
         stop: function () {

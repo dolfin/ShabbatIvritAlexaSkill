@@ -8,13 +8,14 @@
             "Alexa, play shabbat ivrit",
             "Alexa, stream shabbat ivrit"
           ],
+          "keywords": [],
           "name": "Shabbat Ivrit",
           "description": "This skill plays the latest Shabbat Ivrit Radio on 103FM"
         }
       },
       "isAvailableWorldwide": true,
-      "testingInstructions": "JusSt launch the skill",
-      "category": "GAMES",
+      "testingInstructions": "Just launch the skill",
+      "category": "STREAMING_SERVICE",
       "distributionCountries": []
     },
     "apis": {
