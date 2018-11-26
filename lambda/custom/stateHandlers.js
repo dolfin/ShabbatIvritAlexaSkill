@@ -140,9 +140,15 @@ var controller = function () {
               var token = String(thiz.attributes['playOrder'][thiz.attributes['index']]);
               var playBehavior = 'REPLACE_ALL';
               var podcast = ad[thiz.attributes['playOrder'][thiz.attributes['index']]];
+              var podcastUrl = thiz.attributes['podcastUrl'];
               var offsetInMilliseconds = thiz.attributes['offsetInMilliseconds'];
               // Since play behavior is REPLACE_ALL, enqueuedToken attribute need to be set to null.
               thiz.attributes['enqueuedToken'] = null;
+
+              if (podcast.url !== podcastUrl) {
+                offsetInMilliseconds = 0;
+                thiz.attributes['offsetInMilliseconds'] = 0;
+              }
 
               if (thiz.event.request.type.substring(0,11) === 'AudioPlayer') {
                   var cardTitle = 'Playing ' + podcast.title;
@@ -163,7 +169,7 @@ var controller = function () {
                       };
                   thiz.response.cardRenderer(cardTitle, cardContent, cardImage);
 
-                  var message = "Playing "+podcast.title;
+                  var message = "Playing " + podcast.title;
                   thiz.response.speak(message);
               }
 

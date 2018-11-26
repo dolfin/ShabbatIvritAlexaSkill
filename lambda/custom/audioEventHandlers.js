@@ -16,6 +16,13 @@ var audioEventHandlers = Alexa.CreateStateHandler(constants.states.PLAY_MODE, {
         this.attributes['token'] = getToken.call(this);
         this.attributes['index'] = getIndex.call(this);
         this.attributes['playbackFinished'] = false;
+
+        var thiz = this;
+        audioData(function(ad) {
+          var podcast = ad[thiz.attributes['playOrder'][thiz.attributes['index']]];
+          thiz.attributes['podcastUrl'] = podcast.url;
+        });
+
         this.emit(':saveState', true);
     },
     'PlaybackFinished' : function () {
@@ -54,7 +61,7 @@ var audioEventHandlers = Alexa.CreateStateHandler(constants.states.PLAY_MODE, {
              */
             return this.context.succeed(true);
         }
-        
+
         var enqueueIndex = this.attributes['index'];
         enqueueIndex +=1;
 
